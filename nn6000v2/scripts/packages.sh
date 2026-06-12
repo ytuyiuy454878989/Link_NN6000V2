@@ -253,22 +253,6 @@ _sync_luci_lib_docker() {
     echo "✓ luci-lib-docker 克隆完成"
 }
 
-clone_dockerman() {
-    local path="$OPENWRT_PACKAGES_DIR/luci-app-dockerman"
-    local repo_url="${GITHUB_BASE}wzdddyy/luci-app-dockerman.git"
-    local temp_dir="$OPENWRT_PACKAGES_DIR/dockerman"
-    
-    _sync_luci_lib_docker || return
-    
-    clone_packages "luci-app-dockerman" \
-        "$repo_url" \
-        "$temp_dir" \
-        "applications/luci-app-dockerman" \
-        "" \
-        "" \
-        "$temp_dir/applications/luci-app-dockerman" \
-        "$path"
-}
 
 clone_quickfile() {
     local QUICKFILE_DIR="$OPENWRT_PACKAGES_DIR/luci-app-quickfile"
