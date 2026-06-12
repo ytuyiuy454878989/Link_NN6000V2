@@ -220,39 +220,6 @@ EOF
     chmod +x "$disable_script"
 }
 
-clone_diskman() {
-    local path="$OPENWRT_PACKAGES_DIR/luci-app-diskman"
-    local repo_url="${GITHUB_BASE}lisaac/luci-app-diskman.git"
-    local temp_dir="$OPENWRT_PACKAGES_DIR/diskman"
-    
-    clone_packages "luci-app-diskman" \
-        "$repo_url" \
-        "$temp_dir" \
-        "applications/luci-app-diskman" \
-        "" \
-        "" \
-        "$temp_dir/applications/luci-app-diskman" \
-        "$path"
-    
-    sed -i 's/fs-ntfs /fs-ntfs3 /g' "$path/Makefile"
-    sed -i '/ntfs-3g-utils /d' "$path/Makefile"
-}
-
-_sync_luci_lib_docker() {
-    local repo_url="${GITHUB_BASE}lisaac/luci-lib-docker.git"
-    local luci_lib_docker_dir="$OPENWRT_PACKAGES_DIR/luci-lib-docker"
-    
-    mkdir -p "$OPENWRT_PACKAGES_DIR" || return
-    
-    rm -rf "$luci_lib_docker_dir" 2>/dev/null || true
-    if ! git clone --depth=1 "$repo_url" "$luci_lib_docker_dir"; then
-        echo "错误：从 $repo_url 克隆 luci-lib-docker 仓库失败" >&2
-        exit 1
-    fi
-    
-    echo "✓ luci-lib-docker 克隆完成"
-}
-
 
 clone_quickfile() {
     local QUICKFILE_DIR="$OPENWRT_PACKAGES_DIR/luci-app-quickfile"
