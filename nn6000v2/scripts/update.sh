@@ -43,8 +43,6 @@ main() {
     update_golang
     clone_quickfile
     clone_lucky
-    clone_diskman
-    clone_dockerman
     clone_adguardhome
     clone_easytier
     clone_oaf
