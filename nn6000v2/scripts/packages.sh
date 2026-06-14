@@ -66,7 +66,7 @@ clone_packages() {
 
 install_openwrt_packages() {
     ./scripts/feeds install -p openwrt_packages -f \
-        xray-core sing-box trojan-plus naiveproxy shadowsocks-libev v2ray-plugin geoview \
+        # xray-core sing-box trojan-plus naiveproxy shadowsocks-libev v2ray-plugin geoview \
         microsocks tcping chinadns-ng dns2socks resolveip \
         taskd luci-lib-xterm luci-lib-taskd \
         luci-app-store quickstart luci-app-quickstart luci-app-istorex \
