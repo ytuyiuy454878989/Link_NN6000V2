@@ -15,7 +15,8 @@ on:
     # 每 3 天编译一次（UTC 时间，北京时间 = UTC+8）
     # UTC 20:00 = 北京时间 04:00
     - cron: '0 20 */3 * *'
-
+# Action脚本开头添加加速
+git config --global url."https://mirror.ghproxy.com/https://github.com/".insteadOf https://github.com/
 env:
   DEVICE_MODEL: link_nn6000v2_immwrt
   REPO_URL: https://github.com/VIKINGYFY/immortalwrt.git
