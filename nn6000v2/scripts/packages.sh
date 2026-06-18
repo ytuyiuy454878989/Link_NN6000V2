@@ -67,11 +67,6 @@ clone_packages() {
 install_openwrt_packages() {
     ./scripts/feeds install -p openwrt_packages -f \
        # 删除旧xray插件目录（如果存在）
-        rm -rf package/luci-app-xray package/xray-core
-        # 拉取稳定适配版
-        git clone https://mirror.ghproxy.com/https://github.com/sbwml/luci-app-xray package/luci-app-xray
-        git clone https://mirror.ghproxy.com/https://github.com/sbwml/xray-core package/xray-core
-        xray-core sing-box trojan-plus naiveproxy shadowsocks-libev v2ray-plugin geoview \
         microsocks tcping chinadns-ng dns2socks resolveip \
         taskd luci-lib-xterm luci-lib-taskd \
         luci-app-store quickstart luci-app-quickstart luci-app-istorex \
