@@ -263,7 +263,7 @@ jobs:
             echo "$RELEASES" | while read -r tag; do
               if [ -n "$tag" ]; then
                 echo "  删除：$tag"
-                gh release delete "$tag" --cleanup-tag --yes 2>/dev/null || true
+                gh release delete "$tag" --cleanup-tag --yes 20>/dev/null || true
               fi
             done
           fi
