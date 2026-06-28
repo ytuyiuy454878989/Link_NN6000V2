@@ -1,4 +1,4 @@
-name: Go_Release
+name: Release_immwrt
 
 on:
   workflow_dispatch:
