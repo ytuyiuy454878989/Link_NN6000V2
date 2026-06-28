@@ -1,4 +1,4 @@
-name: Release_immwrt
+name: main
 
 on:
   workflow_dispatch:
