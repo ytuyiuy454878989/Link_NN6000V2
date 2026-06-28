@@ -1,4 +1,4 @@
-name: old_ok
+name: old_Release
 
 on:
   workflow_dispatch:
