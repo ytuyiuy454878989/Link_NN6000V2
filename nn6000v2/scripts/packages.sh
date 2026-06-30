@@ -304,13 +304,25 @@ clone_luci_tailscale() {
         "" \
         "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
 }
-# 集成app-xunlei迅雷插件
-sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages;main' feeds.conf
+# 集成 kenzo 源：迅雷 luci-app-xunlei + 易有云 luci-app-linkease
+KENZO_FEED="src-git kenzo https://github.com/kenzok8/openwrt-packages;main"
+# 判断 feeds.conf 中是否已存在该源，不存在再追加
+if ! grep -Fxq "$KENZO_FEED" feeds.conf; then
+    echo "$KENZO_FEED" >> feeds.conf
+fi
+
+# 仅更新一次 kenzo feed
 ./scripts/feeds update kenzo
-./scripts/feeds install luci-app-xunlei
-echo "CONFIG_PACKAGE_luci-app-xunlei=y" >> mydiffconfig
-# 集成app-linkease易有云插件
-sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages;main' feeds.conf
-./scripts/feeds update kenzo
-./scripts/feeds install  luci-app-linkease
-echo "CONFIG_PACKAGE_luci-app-linkease=y" >> mydiffconfig
+
+# 批量安装两个插件
+./scripts/feeds install luci-app-xunlei luci-app-linkease
+
+# 定义写入配置的函数，防止重复写入编译宏
+add_config() {
+    local cfg_line="$1"
+    local cfg_file="mydiffconfig"
+    if ! grep -Fxq "$cfg_line" "$cfg_file"; then
+        echo "$cfg_line" >> "$cfg_file"
+    fi
+}
+echo "✅ 迅雷、易有云插件 feeds 配置完成"
