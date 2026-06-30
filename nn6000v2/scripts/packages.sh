@@ -304,3 +304,8 @@ clone_luci_tailscale() {
         "" \
         "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
 }
+# 集成app-xunlei迅雷插件
+sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages;main' feeds.conf.default
+./scripts/feeds update kenzo
+./scripts/feeds install app-xunlei
+echo "CONFIG_PACKAGE_app-xunlei=y" >> mydiffconfig
