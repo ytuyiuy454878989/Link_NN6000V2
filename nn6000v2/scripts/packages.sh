@@ -305,19 +305,42 @@ clone_luci_tailscale() {
         "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
 }
 
-# 逐个下载插件目录文件
-download_app() {
-    local app_name="$1"
-    local target="${OPENWRT_PACKAGES_DIR}/${app_name}"
-    rm -rf "$target"
-    mkdir -p "$target"
-    # 使用github raw目录索引下载，循环拉取文件（备选方案）
-    git archive --remote=https://github.com/kenzok8/openwrt-packages HEAD "${app_name}" | tar -x -C "${OPENWRT_PACKAGES_DIR}"
+# 拉取kenzok8仓库的luci-app-xunlei、luci-app-linkease
+fetch_kenzok8_plugin() {
+    REPO_URL="https://github.com/kenzok8/openwrt-packages.git"
+    TMP_DIR="${OPENWRT_PACKAGES_DIR}/kenzok8_temp_plugin"
+    # 定义两个应用
+    APPS="luci-app-xunlei luci-app-linkease"
+
+    rm -rf "${TMP_DIR}"
+    # 浅层克隆整个仓库，规避git archive 422错误
+    git clone --depth 1 --single-branch "${REPO_URL}" "${TMP_DIR}"
+
+    for app in ${APPS}
+    do
+        DEST="${OPENWRT_PACKAGES_DIR}/${app}"
+        rm -rf "${DEST}"
+        if [ -d "${TMP_DIR}/${app}" ]; then
+            cp -r "${TMP_DIR}/${app}" "${OPENWRT_PACKAGES_DIR}/"
+            echo "成功导入插件：${app}"
+        else
+            echo "未找到插件目录：${app}"
+        fi
+    done
+
+    rm -rf "${TMP_DIR}"
+    echo "luci-app-xunlei、luci-app-linkease 拉取完成"
 }
 
-download_app luci-app-xunlei
-download_app luci-app-linkease
-echo "插件下载完成”
+# 调用执行
+fetch_kenzok8_plugin
+
+
+
+
+
+
+
 
 
 
