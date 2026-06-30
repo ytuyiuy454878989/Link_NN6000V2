@@ -305,19 +305,19 @@ clone_luci_tailscale() {
         "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
 }
 
-download_single_plugin() {
-    local pkg_name=$1
-    local save_path="$OPENWRT_PACKAGES_DIR/$pkg_name"
-    rm -rf "$save_path"
-    # 直接下载main分支单个插件目录打包
-    wget -qO- "https://github.com/kenzok8/openwrt-packages/archive/refs/heads/main.tar.gz" | tar -xz --strip-components=2 "openwrt-packages-main/$pkg_name" -C "$OPENWRT_PACKAGES_DIR"
+# 逐个下载插件目录文件
+download_app() {
+    local app_name="$1"
+    local target="${OPENWRT_PACKAGES_DIR}/${app_name}"
+    rm -rf "$target"
+    mkdir -p "$target"
+    # 使用github raw目录索引下载，循环拉取文件（备选方案）
+    git archive --remote=https://github.com/kenzok8/openwrt-packages HEAD "${app_name}" | tar -x -C "${OPENWRT_PACKAGES_DIR}"
 }
 
-# 下载两个插件
-download_single_plugin luci-app-xunlei
-download_single_plugin luci-app-linkease
-
-echo "✅ 迅雷、易连插件下载完毕"
+download_app luci-app-xunlei
+download_app luci-app-linkease
+echo "插件下载完成”
 
 
 
