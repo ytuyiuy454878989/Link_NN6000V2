@@ -305,39 +305,25 @@ clone_luci_tailscale() {
         "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
 }
 
-
-# 单独拉取 kenzok8/openwrt-packages 的迅雷、易连插件
-fetch_kenzok8_plugins() {
-    local KENZOK8_REPO="https://github.com/kenzok8/openwrt-packages.git"
-    local TMP_CLONE="$OPENWRT_PACKAGES_DIR/kenzok8_tmp"
-
-    # 清理旧目录
-    rm -rf "$TMP_CLONE"
-    mkdir -p "$TMP_CLONE"
-    cd "$TMP_CLONE" || exit 1
-
-    # 初始化仓库+稀疏检出指定插件
-    git init
-    git remote add origin "$KENZOK8_REPO"
-    git config core.sparseCheckout true
-    # 写入需要拉取的两个插件完整目录
-    echo "luci-app-xunlei/" >> .git/info/sparse-checkout
-    echo "luci-app-linkease/" >> .git/info/sparse-checkout
-    git pull origin main
-
-    # 移动插件到packages编译目录
-    rm -rf "$OPENWRT_PACKAGES_DIR/luci-app-xunlei" "$OPENWRT_PACKAGES_DIR/luci-app-linkease"
-    [ -d "luci-app-xunlei" ] && mv luci-app-xunlei "$OPENWRT_PACKAGES_DIR/"
-    [ -d "luci-app-linkease" ] && mv luci-app-linkease "$OPENWRT_PACKAGES_DIR/"
-
-    # 删除临时目录
-    cd - >/dev/null
-    rm -rf "$TMP_CLONE"
-    echo "✅ luci-app-xunlei、luci-app-linkease 拉取完成"
+download_single_plugin() {
+    local pkg_name=$1
+    local save_path="$OPENWRT_PACKAGES_DIR/$pkg_name"
+    rm -rf "$save_path"
+    # 直接下载main分支单个插件目录打包
+    wget -qO- "https://github.com/kenzok8/openwrt-packages/archive/refs/heads/main.tar.gz" | tar -xz --strip-components=2 "openwrt-packages-main/$pkg_name" -C "$OPENWRT_PACKAGES_DIR"
 }
 
-# 执行拉取
-fetch_kenzok8_plugins
+# 下载两个插件
+download_single_plugin luci-app-xunlei
+download_single_plugin luci-app-linkease
+
+echo "✅ 迅雷、易连插件下载完毕"
+
+
+
+
+
+
 
 
 
