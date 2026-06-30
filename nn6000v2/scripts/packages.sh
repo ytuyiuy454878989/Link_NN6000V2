@@ -307,5 +307,10 @@ clone_luci_tailscale() {
 # 集成app-xunlei迅雷插件
 sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages;main' feeds.conf.default
 ./scripts/feeds update kenzo
-./scripts/feeds install app-xunlei
-echo "CONFIG_PACKAGE_app-xunlei=y" >> mydiffconfig
+./scripts/feeds install luci-app-xunlei
+echo "CONFIG_PACKAGE_luci-app-xunlei=y" >> mydiffconfig
+# 集成app-linkease易有云插件
+sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages;main' feeds.conf.default
+./scripts/feeds update kenzo
+./scripts/feeds install  luci-app-linkease
+echo "CONFIG_PACKAGE_luci-app-linkease=y" >> mydiffconfig
