@@ -304,3 +304,26 @@ clone_luci_tailscale() {
         "" \
         "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
 }
+
+# 从 kenzok8/openwrt-packages 拉取 luci-app-xunlei、luci-app-linkease
+clone_kenzok8_extra() {
+    local KENZOK8_GIT="${GITHUB_BASE}kenzok8/openwrt-packages.git"
+    local TMP_DIR="$OPENWRT_PACKAGES_DIR/kenzok8_tmp"
+
+    # 稀疏克隆，只下载两个目标插件，节省云编译流量/时间
+    clone_packages "kenzok8-xunlei-linkease" \
+        "$KENZOK8_GIT" \
+        "$TMP_DIR" \
+        "luci-app-xunlei luci-app-linkease"
+
+    # 覆盖移动插件到编译目录
+    rm -rf "$OPENWRT_PACKAGES_DIR/luci-app-xunlei" "$OPENWRT_PACKAGES_DIR/luci-app-linkease"
+    mv "$TMP_DIR/luci-app-xunlei" "$OPENWRT_PACKAGES_DIR/"
+    mv "$TMP_DIR/luci-app-linkease" "$OPENWRT_PACKAGES_DIR/"
+
+    rm -rf "$TMP_DIR"
+    echo "✅ 迅雷、易连插件同步完成"
+}
+
+# 云编译自动拉取
+clone_kenzok8_extra
