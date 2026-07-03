@@ -70,10 +70,10 @@ install_openwrt_packages() {
         microsocks tcping chinadns-ng dns2socks resolveip \
         taskd luci-lib-xterm luci-lib-taskd \
         luci-app-store quickstart luci-app-quickstart luci-app-istorex \
-        smartdns luci-app-smartdns luci-theme-argon luci-app-argon-config \
-        luci-lib-docker luci-app-lucky luci-app-adguardhome luci-app-easytier \
+        luci-app-smartdns luci-theme-argon luci-app-argon-config \
+        uci-app-lucky luci-app-adguardhome luci-app-easytier \
         luci-app-oaf oaf open-app-filter \
-        luci-app-diskman luci-app-dockerman luci-app-quickfile luci-app-passwall \
+        luci-app-diskman luci-app-quickfile luci-app-passwall \
         luci-app-zerotier luci-app-openlist2 
 }
 
