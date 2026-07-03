@@ -198,11 +198,17 @@ jobs:
 
       - name: Save Build Dependencies Cache
         uses: actions/cache/save@v5.0.4
+        continue-on-error: true
         with:
           path: |
             ./action_build/.ccache
             ./action_build/staging_dir
-          key: ${{ matrix.os }}-${{ hashFiles('**/repo_flag') }}
+          # 原key: ${{ matrix.os }}-${{ hashFiles('**/repo_flag') }}
+
+      # 精确匹配repo_flag + 延长hash超时 + 矩阵设备区分key防抢占
+          key: ${{ matrix.os }}-${{ matrix.target }}-${{ hashFiles('./repo_flag', '', 300) }}
+
+
 
       - name: Machine Information
         run: |
