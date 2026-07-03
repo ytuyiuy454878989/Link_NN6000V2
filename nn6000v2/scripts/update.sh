@@ -83,3 +83,8 @@ main() {
 }
 
 main "$@"
+clone_luci_tailscale() {
+    local target="${BASE_PATH}/feeds/openwrt_packages/luci-app-tailscale"
+    rm -rf "${target}"
+    git clone --depth 1 https://github.com/sbwml/luci-app-tailscale.git "${target}"
+}
