@@ -43,13 +43,14 @@ main() {
     update_golang
     clone_quickfile
     clone_lucky
+    clone_diskman
+    clone_dockerman
     clone_adguardhome
     clone_easytier
     clone_oaf
     clone_luci_tailscale
     clone_passwall
     install_feeds
-    fix_smartdns_makefile
     update_docker_stack
     remove_tweaked_packages
     change_dnsmasq2full
@@ -67,7 +68,6 @@ main() {
     set_build_signature
     add_backup_info_to_sysupgrade
     remove_attendedsysupgrade
-    fix_rust_compile_error
     fix_kconfig_recursive_dependency
     set_nginx_default_config
     update_nginx_ubus_module
