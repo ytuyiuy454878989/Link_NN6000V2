@@ -66,14 +66,15 @@ clone_packages() {
 
 install_openwrt_packages() {
     ./scripts/feeds install -p openwrt_packages -f \
-       # 删除旧xray插件目录（如果存在）
+        xray-core sing-box trojan-plus naiveproxy shadowsocks-libev v2ray-plugin geoview \
+        microsocks tcping chinadns-ng dns2socks resolveip \
         taskd luci-lib-xterm luci-lib-taskd \
         luci-app-store quickstart luci-app-quickstart luci-app-istorex \
         smartdns luci-app-smartdns luci-theme-argon luci-app-argon-config \
         luci-lib-docker luci-app-lucky luci-app-adguardhome luci-app-easytier \
         luci-app-oaf oaf open-app-filter \
-        luci-app-diskman luci-app-quickfile luci-app-passwall \
-        luci-app-tailscale-community
+        luci-app-diskman luci-app-dockerman luci-app-quickfile luci-app-passwall \
+        luci-app-zerotier luci-app-openlist2 
 }
 
 clone_passwall() {
@@ -219,6 +220,55 @@ EOF
     chmod +x "$disable_script"
 }
 
+clone_diskman() {
+    local path="$OPENWRT_PACKAGES_DIR/luci-app-diskman"
+    local repo_url="${GITHUB_BASE}lisaac/luci-app-diskman.git"
+    local temp_dir="$OPENWRT_PACKAGES_DIR/diskman"
+    
+    clone_packages "luci-app-diskman" \
+        "$repo_url" \
+        "$temp_dir" \
+        "applications/luci-app-diskman" \
+        "" \
+        "" \
+        "$temp_dir/applications/luci-app-diskman" \
+        "$path"
+    
+    sed -i 's/fs-ntfs /fs-ntfs3 /g' "$path/Makefile"
+    sed -i '/ntfs-3g-utils /d' "$path/Makefile"
+}
+
+_sync_luci_lib_docker() {
+    local repo_url="${GITHUB_BASE}lisaac/luci-lib-docker.git"
+    local luci_lib_docker_dir="$OPENWRT_PACKAGES_DIR/luci-lib-docker"
+    
+    mkdir -p "$OPENWRT_PACKAGES_DIR" || return
+    
+    rm -rf "$luci_lib_docker_dir" 2>/dev/null || true
+    if ! git clone --depth=1 "$repo_url" "$luci_lib_docker_dir"; then
+        echo "错误：从 $repo_url 克隆 luci-lib-docker 仓库失败" >&2
+        exit 1
+    fi
+    
+    echo "✓ luci-lib-docker 克隆完成"
+}
+
+clone_dockerman() {
+    local path="$OPENWRT_PACKAGES_DIR/luci-app-dockerman"
+    local repo_url="${GITHUB_BASE}wzdddyy/luci-app-dockerman.git"
+    local temp_dir="$OPENWRT_PACKAGES_DIR/dockerman"
+    
+    _sync_luci_lib_docker || return
+    
+    clone_packages "luci-app-dockerman" \
+        "$repo_url" \
+        "$temp_dir" \
+        "applications/luci-app-dockerman" \
+        "" \
+        "" \
+        "$temp_dir/applications/luci-app-dockerman" \
+        "$path"
+}
 
 clone_quickfile() {
     local QUICKFILE_DIR="$OPENWRT_PACKAGES_DIR/luci-app-quickfile"
@@ -243,14 +293,8 @@ remove_attendedsysupgrade() {
     done
 }
 
-clone_luci_tailscale() {
-    local TEMP_DIR="$OPENWRT_PACKAGES_DIR/luci-app-tailscale-community-temp"
-    local TARGET_DIR="$OPENWRT_PACKAGES_DIR/luci-app-tailscale-community"
-    
-    clone_packages "luci-app-tailscale-community" \
-        "${GITHUB_BASE}Tokisaki-Galaxy/luci-app-tailscale-community.git" \
-        "$TEMP_DIR" \
-        "" \
-        "" \
-        "rm -rf \"$TARGET_DIR\" 2>/dev/null || true; mv \"$TEMP_DIR/luci-app-tailscale-community\" \"$TARGET_DIR\"; rm -rf \"$TEMP_DIR\""
+clone_luci_zerotier() {
+    clone_packages "luci-app-zerotier" \
+        "${GITHUB_BASE}wzdddyy/luci-app-zerotier.git" \
+        "$OPENWRT_PACKAGES_DIR/luci-app-zerotier"
 }
