@@ -1,4 +1,4 @@
-name: Release1
+name: Releas
 
 on:
   workflow_dispatch:
