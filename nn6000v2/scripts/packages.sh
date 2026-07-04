@@ -73,8 +73,8 @@ install_openwrt_packages() {
         smartdns luci-app-smartdns luci-theme-argon luci-app-argon-config \
         luci-lib-docker luci-app-lucky luci-app-adguardhome luci-app-easytier \
         luci-app-oaf oaf open-app-filter \
-        luci-app-diskman luci-app-dockerman luci-app-quickfile luci-app-passwall \
-        luci-app-tailscale-community luci-app-openlist2 luci-app-linkease luci-app-xunlei
+        luci-app-diskman luci-app-quickfile luci-app-passwall \
+        luci-app-tailscale-community luci-app-openlist2
 }
 
 clone_passwall() {
