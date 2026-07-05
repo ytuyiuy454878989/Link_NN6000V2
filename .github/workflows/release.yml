@@ -254,8 +254,8 @@ jobs:
           gh release list --json tagName,createdAt --jq 'sort_by(.tagName) | reverse | .[] | {tagName: .tagName, createdAt: .createdAt}'
           echo ""
           
-          # 获取所有发布
-          RELEASES=$(gh release list --json tagName --jq 'sort_by(.tagName) | reverse | .[2:] | .[].tagName')
+          # 获取所有发布的Release,除的旧Release：保留最新20000个，其余全部删除
+          RELEASES=$(gh release list --json tagName --jq 'sort_by(.tagName) | reverse | .[20000:] | .[].tagName')
           
           if [ -z "$RELEASES" ]; then
             echo "无需清理 Release"
@@ -264,7 +264,7 @@ jobs:
             echo "$RELEASES" | while read -r tag; do
               if [ -n "$tag" ]; then
                 echo "  删除：$tag"
-                gh release delete "$tag" --cleanup-tag --yes 20>/dev/null || true
+                gh release delete "$tag" --cleanup-tag --yes 2>/dev/null || true
               fi
             done
           fi
@@ -280,11 +280,11 @@ jobs:
           gh run list --workflow release.yml --json name,databaseId,createdAt --jq 'sort_by(.createdAt) | reverse | .[] | {name: .name, databaseId: .databaseId, createdAt: .createdAt}'
           echo ""
           
-          # 获取工作流运行记录，按创建时间排序，保留最新的200个
-          gh run list --workflow release.yml --json databaseId,createdAt --jq 'sort_by(.createdAt) | reverse | .[2:] | .[].databaseId' | while read -r run_id; do
+          # 获取工作流运行记录，按创建时间排序，保留最新的20000个，删除更早的
+          gh run list --workflow release.yml --json databaseId,createdAt --jq 'sort_by(.createdAt) | reverse | .[20000:] | .[].databaseId' | while read -r run_id; do
             if [ -n "$run_id" ]; then
               echo "  删除工作流运行记录：$run_id"
-              gh run delete "$run_id" 200>/dev/null || true
+              gh run delete "$run_id" 2>/dev/null || true
             fi
           done
           
