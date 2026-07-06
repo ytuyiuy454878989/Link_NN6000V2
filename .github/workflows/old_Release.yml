@@ -266,7 +266,7 @@ jobs:
             echo "$RELEASES" | while read -r tag; do
               if [ -n "$tag" ]; then
                 echo "  删除：$tag"
-                gh release delete "$tag" --cleanup-tag --yes 2>/dev/null || true
+                gh release delete "$tag" --cleanup-tag --yes 20000>/dev/null || true
               fi
             done
           fi
@@ -286,7 +286,7 @@ jobs:
           gh run list --workflow release.yml --json databaseId,createdAt --jq 'sort_by(.createdAt) | reverse | .[20000:] | .[].databaseId' | while read -r run_id; do
             if [ -n "$run_id" ]; then
               echo "  删除工作流运行记录：$run_id"
-              gh run delete "$run_id" 2>/dev/null || true
+              gh run delete "$run_id" 20000>/dev/null || true
             fi
           done
           
