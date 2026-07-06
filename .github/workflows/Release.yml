@@ -1,4 +1,4 @@
-name: Release+clean
+name: Release
 
 on:
   workflow_dispatch:
