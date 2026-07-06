@@ -223,8 +223,8 @@ jobs:
             echo "- 账户：root"
             echo "- 密码：无"
             echo "- no_wifi 后缀的版本未包含 WIFI 驱动程序"
+					  echo "$(grep -oP "luci-app(-[a-zA-Z0-9]{1,})" ./firmware/*.manifest | awk -F":" '{print $NF}')"
           } > release_body.txt
-
       - name: Release Firmware
         uses: softprops/action-gh-release@v3
         with:
