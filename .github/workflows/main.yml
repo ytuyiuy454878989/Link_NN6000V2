@@ -1,4 +1,4 @@
-name: main
+name: Go_Release
 
 on:
   workflow_dispatch:
@@ -12,9 +12,9 @@ on:
         required: false
         default: '-'
   schedule:
-    # 每 3 天编译一次（UTC 时间，北京时间 = UTC+8）
+    # 每 7 天编译一次（UTC 时间，北京时间 = UTC+8）
     # UTC 20:00 = 北京时间 04:00
-    - cron: '0 20 */3 * *'
+    - cron: '0 20 */7 * *'
 
 env:
   DEVICE_MODEL: link_nn6000v2_immwrt
@@ -114,7 +114,7 @@ jobs:
           path: |
             ./action_build/.ccache
             ./action_build/staging_dir
-          key: ${{ matrix.os }}-${{ hashFiles('**/repo_flag') }}
+          key: ${{ matrix.os }}-${{ hashFiles('repo_flag') }}
           restore-keys: |
             ${{ matrix.os }}-
 
@@ -198,17 +198,11 @@ jobs:
 
       - name: Save Build Dependencies Cache
         uses: actions/cache/save@v5.0.4
-        continue-on-error: true
         with:
           path: |
             ./action_build/.ccache
             ./action_build/staging_dir
-          # 原key: ${{ matrix.os }}-${{ hashFiles('**/repo_flag') }}
-
-      # 精确匹配repo_flag + 延长hash超时 + 矩阵设备区分key防抢占
-          key: ${{ matrix.os }}-${{ matrix.target }}-${{ hashFiles('./repo_flag', '', 300) }}
-
-
+          key: ${{ matrix.os }}-${{ hashFiles('repo_flag') }}
 
       - name: Machine Information
         run: |
@@ -220,24 +214,27 @@ jobs:
 
       - name: Prepare Release Body
         run: |
-          echo "📒固件信息" > release_body.txt
-          echo "云编译发布" > release_body.txt
-          echo "⚽固件源码：${{ env.BUILD_SRC }}" >> release_body.txt
-          echo "🧊内核版本: ${{ env.KVER }}" >> release_body.txt
-          echo " WIFI 密码：12345678">> release_body.txt
-          echo "LAN地址: 10.0.0.1" >> release_body.txt
-          echo " 账户：root" >> release_body.txt
-          echo " 🔑密码：无" >> release_body.txt
-          echo "-no_wifi 后缀的版本未包含 WIFI 驱动程序" >> release_body.txt
-          echo "插件列表：" >> release_body.txt
-          echo "$(grep -oP "luci-app(-[a-zA-Z0-9]{1,}){1,}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
-          echo "-----" >> release_body.txt         
-          # 原先代码 echo "$(grep -oP "luci-app(-[a-zA-Z0-9]{1,}){1,}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
-
+          {
+            echo "## 版本信息"
+            echo "- 源码：${{ env.BUILD_SRC }}"
+            echo "- Kernel: ${{ env.KVER }}"
+            echo "- WIFI 密码：147258369"
+            echo "- LAN 地址：10.0.0.1"
+            echo "- 账户：root"
+            echo "- 密码：无"
+            echo "- no_wifi 后缀的版本未包含 WIFI 驱动程序"
+          } > release_body.txt
 
       - name: Release Firmware
-        uses: softprops/action-gh-release@v3.0.1
+        uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
-          files: ${{ inputs.model == 'n1_immwrt' && env.PACKAGED_OUTPUTPATH || './firmware' }}/*.*
+          tag_name: ${{ env.BUILD_DATE }}_${{ env.DEVICE_MODEL }}
+          files: |
+            ./firmware/*.bin
+            ./firmware/immortalwrt-*.manifest
+            ./firmware/*.img.gz
+            ./firmware/*.itb
+            ./firmware/*.fip
+            ./firmware/*.ubi
           body_path: ./release_body.txt
+          make_latest: true
