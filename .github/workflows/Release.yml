@@ -1,4 +1,8 @@
-name: Release
+name: 构建和发布固件Build OpenWrt for specific target and release
+
+permissions:
+  contents: write
+  actions: write
 
 on:
   workflow_dispatch:
