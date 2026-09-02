@@ -101,7 +101,10 @@ jobs:
           # 克隆仓库
           echo "克隆仓库：${{ env.REPO_URL }} 分支：${{ env.REPO_BRANCH }}"
           git clone --depth 1 -b ${{ env.REPO_BRANCH }} ${{ env.REPO_URL }} ./action_build
-          cd ./action_build && git rev-parse HEAD > ../repo_flag
+          cd ./action_build
+          git rev-parse HEAD > ../repo_flag
+          # 【关键修复】拉取全部子模块，gnulib依赖在此，解决stdcountof.h缺失
+          git submodule update --init --recursive
           cd ..
           
           # 移除国内下载源
@@ -109,24 +112,26 @@ jobs:
           if [ -f "$PROJECT_MIRRORS_FILE" ]; then
             sed -i '/.cn\//d; /tencent/d; /aliyun/d' "$PROJECT_MIRRORS_FILE"
           fi
+      # --------------------------
+      # Cache修改：仅缓存ccache，不再缓存staging_dir，hostpkg绝不缓存
+      # --------------------------
       - name: Restore Build Dependencies Cache
         uses: actions/cache/restore@v5.0.4
         with:
           path: |
             ./action_build/.ccache
-            ./action_build/staging_dir
           key: ${{ matrix.os }}-${{ hashFiles('**/repo_flag') }}
           restore-keys: |
             ${{ matrix.os }}-
-      - name: Refresh the cache
-        run: |
-          if [ -d "./action_build/staging_dir" ]; then
-            find "./action_build/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r dir; do
-                find "$dir" -type f -exec touch {} +
-            done
-          fi
+
       - name: Build Firmware
         run: |
+          cd ./action_build
+          # 【关键修复】编译前强制清理host相关旧产物，避免旧gnulib残留
+          rm -rf build_dir/hostpkg
+          rm -rf staging_dir/host staging_dir/hostpkg
+          cd ..
+
           # 设置 PPPoE 配置
           PPPOE_USER="${{ github.event.inputs.pppoe_username || '-' }}"
           PPPOE_PASS="${{ github.event.inputs.pppoe_password || '-' }}"
@@ -192,13 +197,11 @@ jobs:
           
           echo "========cache status========"
           echo "ccache: $(du -sh ./action_build/.ccache 2>/dev/null | cut -f 1 || echo 'N/A')"
-          echo "staging: $(du -sh ./action_build/staging_dir 2>/dev/null | cut -f 1 || echo 'N/A')"
       - name: Save Build Dependencies Cache
         uses: actions/cache/save@v5.0.4
         with:
           path: |
             ./action_build/.ccache
-            ./action_build/staging_dir
           key: ${{ matrix.os }}-${{ hashFiles('**/repo_flag') }}
 
       - name: Machine Information
