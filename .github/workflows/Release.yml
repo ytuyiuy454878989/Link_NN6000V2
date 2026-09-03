@@ -233,10 +233,3 @@ jobs:
           path: |
             ./action_build/.ccache
           key: ${{ matrix.os }}-${{ hashFiles('repo_flag') }}
-      - name: Machine Information
-        run: |
-          echo "=============================================="
-          lscpu | grep -E "name|Core|Thread"
-          echo "=============================================="
-          df -h
-          echo "=============================================="
