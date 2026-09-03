@@ -191,12 +191,7 @@ jobs:
           
           echo "========cache status========"
           echo "ccache: $(du -sh ./action_build/.ccache 2>/dev/null | cut -f 1 || echo 'N/A')"
-      - name: Save Build Dependencies Cache
-        uses: actions/cache/save@v5.0.4
-        with:
-          path: |
-            ./action_build/.ccache
-          key: ${{ matrix.os }}-${{ hashFiles('repo_flag') }}
+
       - name: Machine Information
         run: |
           echo "=============================================="
