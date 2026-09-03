@@ -224,4 +224,19 @@ jobs:
             ./firmware/*.fip
             ./firmware/*.ubi
           body_path: ./release_body.txt
-          make_latest: true
+          make_latest: true         
+
+
+      - name: Save Build Dependencies Cache
+        uses: actions/cache/save@v5.0.4
+        with:
+          path: |
+            ./action_build/.ccache
+          key: ${{ matrix.os }}-${{ hashFiles('repo_flag') }}
+      - name: Machine Information
+        run: |
+          echo "=============================================="
+          lscpu | grep -E "name|Core|Thread"
+          echo "=============================================="
+          df -h
+          echo "=============================================="
