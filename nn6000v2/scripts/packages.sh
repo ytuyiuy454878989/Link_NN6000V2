@@ -73,7 +73,7 @@ install_openwrt_packages() {
         luci-app-oaf oaf open-app-filter \
         luci-app-dockerman luci-app-quickfile \
         luci-app-mini-diskmanager \
-        luci-app-tailscale-community
+        luci-app-tailscale-community openlist2 luci-app-openlist2
 }
 
 clone_singbox() {
