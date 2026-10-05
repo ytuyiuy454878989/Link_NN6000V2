@@ -1,4 +1,4 @@
-name: Go_Release
+name: Go_Release编译immwrt
 
 on:
   workflow_dispatch:
