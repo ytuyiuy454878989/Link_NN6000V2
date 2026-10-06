@@ -2,6 +2,15 @@ name: Go_Release编译libwrt
 
 on:
   workflow_dispatch:
+    inputs:
+      pppoe_username:
+        description: 'PPPoE 宽带账号 (留空使用默认值 "-")'
+        required: false
+        default: '-'
+      pppoe_password:
+        description: 'PPPoE 宽带密码 (留空使用默认值 "-")'
+        required: false
+        default: '-'
   schedule:
     # 每 7 天编译一次（UTC 时间，北京时间 = UTC+8）
     # UTC 20:00 = 北京时间 04:00
