@@ -127,7 +127,7 @@ jobs:
             done
           fi
 
-      - name: Build Firmware
+      - name: Build Firmwar
         run: |
           # 设置 PPPoE 配置
           PPPOE_USER="${{ github.event.inputs.pppoe_username || '-' }}"
