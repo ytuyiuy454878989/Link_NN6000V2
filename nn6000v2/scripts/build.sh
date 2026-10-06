@@ -25,9 +25,9 @@ if [[ ! -f $CONFIG_FILE ]]; then
 fi
 
 # Use environment variables or defaults for repo config
-REPO_URL=${REPO_URL:-https://github.com/VIKINGYFY/immortalwrt.git}
-REPO_BRANCH=${REPO_BRANCH:-main}
-BUILD_DIR=${BUILD_DIR:-imm-nss}
+REPO_URL=${REPO_URL:-https://github.com/LiBwrt/openwrt-6.x.git}
+REPO_BRANCH=${REPO_BRANCH:-25.12-nss}
+BUILD_DIR=${BUILD_DIR:-libwrt}
 COMMIT_HASH=${COMMIT_HASH:-none}
 
 remove_uhttpd_dependency() {
