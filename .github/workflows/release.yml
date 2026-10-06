@@ -1,4 +1,4 @@
-name: Go_Release编译libwrt
+name: Go_Release编译libwrt6
 
 on:
   workflow_dispatch:
