@@ -64,6 +64,20 @@ clone_packages() {
     echo "✓ $name 克隆完成"
 }
 
+fix_apk_pkg_version() {
+    local makefile="$1"
+
+    if [ ! -f "$makefile" ]; then
+        echo "Warning: 未找到 $makefile，跳过 APK 版本号修正。" >&2
+        return 0
+    fi
+
+    if grep -q '^PKG_VERSION:=v' "$makefile"; then
+        sed -i 's/^PKG_VERSION:=v/PKG_VERSION:=/' "$makefile"
+        echo "✓ APK 版本号已修正: $makefile"
+    fi
+}
+
 install_openwrt_packages() {
     ./scripts/feeds install -p openwrt_packages -f \
         taskd luci-lib-xterm luci-lib-taskd \
@@ -149,14 +163,28 @@ clone_lucky() {
 }
 
 clone_adguardhome() {
+    local temp_dir="$OPENWRT_PACKAGES_DIR/adguardhome-temp"
     clone_packages "luci-app-adguardhome" \
-        "${GITHUB_BASE}wzdddyy/luci-app-adguardhome.git" \
+        "${GITHUB_BASE}xiaoxiao29/luci-app-adguardhome.git" \
+        "$temp_dir" \
+        "luci-app-adguardhome" \
+        "" \
+        "" \
+        "$temp_dir/luci-app-adguardhome" \
         "$OPENWRT_PACKAGES_DIR/luci-app-adguardhome"
+    rm -rf "$temp_dir"
+}
+
+clone_zerotier() {
+    clone_packages "luci-app-zerotier" \
+        "${GITHUB_BASE}aimeeacker/luci-app-zerotier.git" \
+        "$OPENWRT_PACKAGES_DIR/luci-app-zerotier"
 }
 
 install_extra_feed_deps() {
     (cd "$BUILD_DIR" && ./scripts/feeds install -f luci-lib-jsonc kmod-ipt-conntrack kmod-ipt-nat)
 }
+
 
 clone_easytier() {
     local EASYTIER_DIR="$OPENWRT_PACKAGES_DIR/luci-app-easytier"
@@ -173,7 +201,6 @@ clone_easytier() {
 
     rm -rf "$TEMP_DIR"
 }
-
 clone_oaf() {
     local OAF_REPO="${GITHUB_BASE}destan19/OpenAppFilter.git"
     local OAF_DIR="$OPENWRT_PACKAGES_DIR/OpenAppFilter"
@@ -226,14 +253,23 @@ clone_mini_diskmanager() {
 }
 
 _sync_luci_lib_docker() {
+    local temp_dir="$OPENWRT_PACKAGES_DIR/luci-lib-docker-temp"
     clone_packages "luci-lib-docker" \
         "${GITHUB_BASE}lisaac/luci-lib-docker.git" \
+        "$temp_dir" \
+        "collections/luci-lib-docker" \
+        "" \
+        "" \
+        "$temp_dir/collections/luci-lib-docker" \
         "$OPENWRT_PACKAGES_DIR/luci-lib-docker"
+    rm -rf "$temp_dir"
+
+    fix_apk_pkg_version "$OPENWRT_PACKAGES_DIR/luci-lib-docker/Makefile"
 }
 
 clone_dockerman() {
     local path="$OPENWRT_PACKAGES_DIR/luci-app-dockerman"
-    local repo_url="${GITHUB_BASE}wzdddyy/luci-app-dockerman.git"
+    local repo_url="${GITHUB_BASE}lisaac/luci-app-dockerman.git"
     local temp_dir="$OPENWRT_PACKAGES_DIR/dockerman"
 
     _sync_luci_lib_docker
@@ -246,6 +282,9 @@ clone_dockerman() {
         "" \
         "$temp_dir/applications/luci-app-dockerman" \
         "$path"
+    rm -rf "$temp_dir"
+
+    fix_apk_pkg_version "$path/Makefile"
 }
 
 clone_quickfile() {
