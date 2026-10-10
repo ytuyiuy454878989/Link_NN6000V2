@@ -5,7 +5,8 @@
 - **参考脚本**：<https://github.com/ZqinKing/wrt_release.git>
 - **源码来源**：<https://github.com/VIKINGYFY/immortalwrt.git> - main
 - **设备支持**：Link\_NN6000V2，内核分区 12m（固件包含带 WiFi 和不带 WiFi 版本）
-- **固件发布**：每七天发布一次，包含最新源码和插件。[点击下载](https://github.com/wzdddyy/Link_NN6000V2/releases/latest)
+- **固件发布**：[点击下载](https://github.com/wzdddyy/Link_NN6000V2/releases/latest)
+- **包 管 理**：2026-10-09 已经切换到APK，不在支持IPK。
 
 ***
 
@@ -39,8 +40,8 @@
 | **luci-app-upnp**        | UPnP 端口映射     |
 | **luci-app-hd-idle**     | 硬盘休眠          |
 | **luci-app-p910nd**      | USB 打印机共享     |
-| **luci-app-easytier**    | EasyTier 虚拟组网 |
 | **luci-app-tailscale-community**    | Tailscale 虚拟组网 |
+| **luci-app-zerotier**    | ZeroTier 虚拟组网 |
 | **luci-app-lucky**       | 多功能网络代理插件            |
 | **luci-app-oaf**         | 应用过滤-默认禁用        |
 | **luci-app-ttyd**        | 终端            |
