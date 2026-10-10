@@ -13,7 +13,7 @@ fix_default_set() {
     install -Dm544 "$BASE_PATH/patches/990_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/990_set_argon_primary"
     install -Dm544 "$BASE_PATH/patches/991_custom_settings" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/991_custom_settings"
     install -Dm544 "$BASE_PATH/patches/992_network_config.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_network_config.sh"
-    install -Dm544 "$BASE_PATH/patches/994_set_opkg_repos" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/994_set_opkg_repos"
+    install -Dm544 "$BASE_PATH/patches/994_set_apk_repos" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/994_set_apk_repos"
     
     if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
         if [ -f "$BASE_PATH/patches/tempinfo" ]; then
@@ -171,7 +171,6 @@ add_backup_info_to_sysupgrade() {
     if [ -f "$conf_path" ]; then
         cat >"$conf_path" <<'EOF'
 /etc/AdGuardHome.yaml
-/etc/easytier
 /etc/lucky/
 EOF
     fi
@@ -193,6 +192,17 @@ fix_rust_compile_error() {
     if [ -f "$BUILD_DIR/feeds/packages/lang/rust/Makefile" ]; then
         sed -i 's/download-ci-llvm=true/download-ci-llvm=false/g' "$BUILD_DIR/feeds/packages/lang/rust/Makefile"
     fi
+}
+
+fix_zerotier_nonfree() {
+    local makefile="$BUILD_DIR/feeds/packages/net/zerotier/Makefile"
+    if [ ! -f "$makefile" ]; then
+        echo "zerotier Makefile not found, skip NONFREE fix"
+        return 0
+    fi
+
+    echo "正在启用 zerotier ZT_NONFREE=1（内置 Controller 支持）..."
+    sed -i 's/ZT_NONFREE=0/ZT_NONFREE=1/g' "$makefile"
 }
 
 fix_smartdns_makefile() {
@@ -271,14 +281,6 @@ fix_openssl_ktls() {
         echo "正在更新 OpenSSL kTLS 配置..."
         sed -i 's/select PACKAGE_kmod-tls/depends on PACKAGE_kmod-tls/g' "$config_in"
         sed -i '/depends on PACKAGE_kmod-tls/a\\tdefault y if PACKAGE_kmod-tls' "$config_in"
-    fi
-}
-
-fix_opkg_check() {
-    local patch_file="$BASE_PATH/patches/001-fix-provides-version-parsing.patch"
-    local opkg_dir="$BUILD_DIR/package/system/opkg"
-    if [ -f "$patch_file" ]; then
-        install -Dm644 "$patch_file" "$opkg_dir/patches/001-fix-provides-version-parsing.patch"
     fi
 }
 
@@ -481,4 +483,3 @@ fix_quickstart() {
         fi
     fi
 }
-
