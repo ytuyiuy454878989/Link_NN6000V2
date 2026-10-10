@@ -46,8 +46,9 @@ main() {
     clone_mini_diskmanager
     clone_dockerman
     clone_adguardhome
+    clone_zerotier
+    fix_zerotier_nonfree
     install_extra_feed_deps
-    clone_easytier
     clone_oaf
     clone_luci_tailscale
     clone_singbox
@@ -77,7 +78,6 @@ main() {
     update_uwsgi_limit_as
     update_script_priority
     fix_openssl_ktls
-    fix_opkg_check
     fix_quectel_cm
     install_pbr_isp
     fix_pbr_ip_forward
